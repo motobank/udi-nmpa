@@ -1,0 +1,1183 @@
+
+
+
+
+
+
+
+<!-- 加载system配置文件 -->
+
+<!-- 读取配置值jsp.meta，并赋值给变量appName -->
+
+
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=100">
+    <title>国家药品监督管理局医疗器械唯一标识数据库</title>
+    <meta http-equiv="Content-Security-Polic" content="upgrade-insecure-requests">
+<link href="/lib/css/common.css" rel="stylesheet" type="text/css">
+<link href="/lib/css/webPortalCss/font-awesome.css" rel="stylesheet" type="text/css">
+<link href="/lib/css/basezwfw.css" rel="stylesheet" type="text/css">
+<link href="/lib/css/index.css" rel="stylesheet" type="text/css">
+<!--[if lt IE 9]>
+<script src="/lib/js/html5shiv.min.js"></script>
+<script src="/lib/js/respond.min.js"></script>
+<script src="/lib/plugins/es5-shim/es5-shim.min.js"></script>
+<script src="/lib/plugins/es5-shim/es5-sham.min.js"></script>
+<![endif]-->
+<style type="text/css">
+    .black_overlay {
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 1001;
+        -moz-opacity: 0.8;
+        opacity: .80;
+        filter: alpha(opacity=80);
+    }
+
+    .white_content {
+        display: none;
+        position: absolute;
+        top: 20%;
+        left: 30%;
+        width: 40%;
+        height: 45%;
+        background-color: white;
+        z-index: 1002;
+        overflow: auto;
+    }
+
+    span.required {
+        color: red;
+        margin-right: 6px;
+    }
+    div.ccl-window {
+        width: 1024px;
+        height: 600px;
+        margin: auto;
+        margin-top: 20px;
+        -moz-border-radius: 5px;      /* Gecko browsers */
+        -webkit-border-radius: 5px;   /* Webkit browsers */
+        border-radius:5px;            /* W3C syntax */
+        background-color: #ffffff;
+    }
+    div.ccl-header {
+        height: 40px;
+        padding: 10px;
+        border-bottom: 1px solid #dddfe0;
+    }
+    div.ccl-header * {
+        display: inline-block;
+    }
+    span.ccl-title {
+        font-weight: 500;
+        font-size: 18px;
+        font-family: "宋体","Source Sans Pro",sans-serif;
+    }
+    iframe.ccl-iframe {
+        width: 100%;
+        height: 560px;
+        -moz-border-radius: 5px;      /* Gecko browsers */
+        -webkit-border-radius: 5px;   /* Webkit browsers */
+        border-radius:5px;            /* W3C syntax */
+    }
+
+    /* 新增编辑弹窗  保存 关闭 按钮 居中 样式 */
+    .modal-footer {
+        padding: 15px;
+        text-align: center;
+        border-top: 1px solid #e5e5e5;
+    }
+
+    div.ccl-window button.close {
+        color: #000;
+    }
+    label.error{
+        color: #dd4b39 !important;
+    }
+
+    .ui-jqgrid  td[role="gridcell"]{
+        word-wrap: break-word;
+        word-break: normal;
+    }
+
+    button.close[data-dismiss]{
+        border: none;
+        background-color: transparent;
+    }
+</style>
+
+    <link href="/lib/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet" type="text/css">
+    <style>
+        th.ui-th-column div{
+            white-space: normal !important;
+            height: auto !important;
+        }
+        .ui-jqgrid-htable .ui-jqgrid-labels{
+            height: 51px !important;
+        }
+        .ui-jqgrid-htable .ui-jqgrid-labels .ui-th-ltr{
+            font-weight: bold !important;
+            background-color: #f6f6f6 !important;
+        }
+        #grid .ui-row-ltr{
+            line-height: 18px;
+            height: 45px !important;
+            background-color: #fff !important;
+        }
+
+        .ui-jqgrid tr.jqgrow td {
+            white-space: normal !important;
+            height: auto !important;
+        }
+
+        .ui-pg-selbox{
+            display: none!important;
+        }
+
+        #deviceSum {
+            margin-left: 10px;
+            font-weight: 900;
+            color: #c5292a;
+        }
+
+        #pager_center {
+            width: 600px!important;
+        }
+        .hint {
+            border-bottom: 1px solid #dfdfdf;
+            height: 38px;
+        }
+        .el-tag {
+            background-color: #e6f7ff;;
+            border-color: #91d5ff;
+            color: #1890ff;
+            display: inline-block;
+            height: 32px;
+            padding: 0 10px;
+            line-height: 30px;
+            font-size: 12px;
+            color: #1890ff;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 4px;
+            box-sizing: border-box;
+            white-space: nowrap;
+
+            height: 20px;
+            padding: 0 5px;
+            line-height: 19px;
+        }
+        .el-tag.el-tag--success {
+            background-color: #f6ffed;
+            border-color: #b7eb8f;
+            color: #52c41a;
+        }
+
+        .el-tag.el-tag--danger {
+            background-color: #fff1f0;
+            border-color: #ffa39e;
+            color: #f5222d;
+        }
+        .el-tag.el-tag--info {
+            background-color: #f4f4f5;
+            border-color: #d3d4d6;
+            color: #909399;
+        }
+
+        /* 限流提示弹窗 */
+        .rateLimit-mask {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .45);
+            z-index: 99999;
+        }
+        .rateLimit-mask.show {
+            display: block;
+        }
+        .rateLimit-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 380px;
+            max-width: 90%;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+            padding: 28px 28px 20px;
+            text-align: center;
+        }
+        .rateLimit-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: #fff7e6;
+            border: 2px solid #ffe58f;
+            color: #faad14;
+            font-size: 30px;
+            line-height: 52px;
+            font-weight: bold;
+        }
+        .rateLimit-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .rateLimit-text {
+            font-size: 13px;
+            color: #888;
+            line-height: 22px;
+            word-break: break-all;
+        }
+        .rateLimit-btn {
+            display: inline-block;
+            margin-top: 22px;
+            min-width: 104px;
+            padding: 8px 0;
+            border: none;
+            border-radius: 4px;
+            background: #1890ff;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .rateLimit-btn:hover {
+            background: #40a9ff;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+
+
+
+<!-- 加载system配置文件 -->
+
+<!-- 读取配置值jsp.meta，并赋值给变量appName -->
+
+
+<script src="/lib/js/jquery.min.js"></script>
+<script type="text/javascript" language="javascript">
+    function valid(){
+        var title = $.trim(document.getElementById("searchContnts").value);
+        if (title == null || title == "") {
+            alert("搜索时请输入关键字！", "error");
+            return false;
+        } else if(title.length>50){
+            alert("关键字不能超过50，请重新输入", "error");
+            return false;
+        }
+        return true;
+    };
+</script>
+<div class="els-header">
+    <div>
+        <div class="els-header-systemName">医疗器械唯一标识数据库 </div>
+        <span></span>
+    </div>
+</div>
+<!--主菜单-->
+<div class="els-mainmenu">
+    <ul>
+        <li>
+            <a href="/home.html">首页 </a>
+        </li>
+        <li>
+            <a href="/toMessageList.html?flag=2">政策法规</a>
+        </li>
+        <li>
+            <a href="/toMessageList.html?flag=3">工作动态</a>
+        </li>
+        <li>
+            <a href="/toApply.html">研究应用</a>
+        </li>
+        <li>
+            <a href="/download.html">数据共享</a>
+        </li>
+        <li>
+            <a href="/showListFAQ.html">帮助台</a>
+        </li>
+    </ul>
+</div>
+
+<div class="els-all" style="overflow: initial">
+    <div class="els-systemSearch">
+        <div>
+            <form id="searchForm" >
+                <input type="text" id="searchContnts" name="query" placeholder="输入产品标识、产品名称或者企业名称"/>
+                <button type="button" class="searchIcon" id="searchIcon">搜索</button>
+                <a class="searchIcon searchIcon-advanced">高级搜索</a>
+            </form>
+        </div>
+        <div class="els-advanced-search">
+            <form id="advancedSearch">
+                <table id="queryTable">
+                    <tr id="queryRows0" class="queryRows query-input first">
+                        <th style="width: 80px"></th>
+                        <td class="queryContion_td_Field">
+                            <select name="SearchName" class="advField">
+                                <option value="all">请选择</option>
+                            </select>
+                        </td>
+                        <td class="queryContion_td_For">
+                            <select name="SearchFor" class="SearchFor">
+                                <option value="1">等于</option>
+                                <option value="2">开头是</option>
+                                <option value="3">开头不是</option>
+                                <option value="4">结尾是</option>
+                                <option value="5">结尾不是</option>
+                                <option value="6">包含</option>
+                                <option value="7">不包含</option>
+                            </select>
+                        </td>
+                        <td class="queryContion_td_input">
+                            <input name="SearchContent" class="queryContent" placeholder="输入查询值"/>
+                        </td>
+                        <td class="control-buttons"><a class="els-delete" onclick="deleteRow(this)"><i class="fa fa-minus-circle" aria-hidden="true"></i></a></td>
+                    </tr>
+                    <tr id="queryRows1" class="queryRows query-input">
+                        <th style="width: 110px">
+                            <select class="SearchTool" name="SearchTool">
+                                <option value="and">与(A）</option>
+                                <option value="or">或(O)</option>
+                            </select>
+                        </th>
+                        <td>
+                            <select name="SearchName" class="advField">
+                                <option value="all">请选择</option>
+                            </select>
+                        </td>
+                        <td class="queryContion_td_For">
+                            <select name="SearchFor" class="SearchFor">
+                                <option value="1">等于</option>
+                                <option value="2">开头是</option>
+                                <option value="3">开头不是</option>
+                                <option value="4">结尾是</option>
+                                <option value="5">结尾不是</option>
+                                <option value="6">包含</option>
+                                <option value="7">不包含</option>
+                            </select>
+                        </td>
+                        <td class="queryContion_td_input">
+                            <input name="SearchContent" class="queryContent" placeholder="输入查询值"/>
+                        </td>
+                        <td class="control-buttons">
+                            <a class="els-delete" onclick="deleteRow(this)"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
+                            <a id="add-row" class="els-add" onclick="addRow()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                </table>
+                    <table>
+                    <tr>
+                        <td colspan="3">
+                            <input disabled="" hidden="hidden" id="query-builder" placeholder="Use the builder below">
+                            <input disabled="" hidden="hidden" id="queryStringChinese">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <button type="button" id="querySearch" class="searchIcon">确定</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+    <div class="els-row">
+        <div class="els-info-box">
+            <div class="els-info-box-left">
+                <b style="font-size: 20px">搜索结果： </b>
+                <span id="query"></span>
+                <span id="deviceSum"></span>
+            </div>
+        </div>
+
+        <div style="margin-top: 10px;" id="deviceGrid">
+            <table id="grid" class="els-jqGrid" ></table>
+            <div id="pager"></div>
+        </div>
+
+        <div class="els-info-box-noresults" style="display:none">
+            <div class="hint">未找到任何结果，因为您的搜索词太短。请输入包含两个或更多字母或数字的搜索词。</div>
+            <div class="els-info-box-noresults-right">
+                <p>搜索建议： </p>
+                <ul style="position: relative;left: 48px;">
+                    <li>检查输入是否正确</li>
+                    <li>尝试重新措辞关键字或使用同义词</li>
+                    <li>简化输入词</li>
+                    <li>尝试减少关键字</li>
+                </ul>
+                <p>访问“<a style="color: #4d2386;text-decoration: revert;" href="/showListFAQ.html">帮助台</a>”获取关于搜索的帮助</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- 加载system配置文件 -->
+
+<!-- 读取配置值jsp.meta，并赋值给变量appName -->
+
+
+<div class="newfooter mt26">
+    
+
+    <div class="w1200-auto clearfix">
+        <div class="about fl-l">
+            <div>本站由国家药品监督管理局主办 版权所有：国家药品监督管理局</div>
+            <div>Copyright © NMPA All Rights Reserved</div>
+            <div>
+                <span class="p8">网站标识码bm35000001</span>
+                备案序号：<span class="p8">京ICP备13027807号</span> <span  class="beian" style="background: url(/lib/img/2019beian.png) no-repeat left"> 京公网安备11010202008311号</span>
+               
+            </div>
+            <div>
+                地址：北京市西城区展览路北露园1号 | 邮编：100037 | &nbsp;&nbsp;<a href="https://www.nmpa.gov.cn/hudong/lxwm/index.html" target="_blank" style="color:#2b5aaa">联系我们</a>
+            </div>
+        </div>
+        <div class="fl-r" style="margin-right: 5%">
+            <a href="http://bszs.conac.cn/sitename?method=show&amp;id=7A8439F78D616CC8E05310291AACA486"
+               target="_blank" class="fl-l"><img src="/lib/img/red.png" alt=""></a>
+            <div class="fl-l" style="margin-top: 5%;">
+                <span id="_span_jiucuo"><img onclick="Link('bm35000001')" src="https://zfwzgl.www.gov.cn/exposure/images/jiucuo.png?v=bm35000001"></span>
+            </div>
+            <div class="fl-l" style="margin-top: 5%;">
+               <span><img src="/lib/img/wuzhangailogo.png"  alt=""></span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+
+        $('.newfooter-link').on('click', function(){
+            $(this).find('dt').addClass('active');
+            $(this).find('dd').show();
+        })
+        $('.newfooter-link').on('mouseleave', function(){
+            $(this).find('dt').removeClass('active');
+            $(this).find('dd').hide();
+        })
+
+    })
+</script>
+<script src="/lib/js/main.js"></script>
+<script src="/lib/js/jquery.SuperSlide.2.1.3.js"></script>
+<script id="_jiucuo_" sitecode="bm35000001" src="https://zfwzgl.www.gov.cn/exposure/jiucuo.js"></script>
+</div>
+
+<!-- 限流提示弹窗 -->
+<div id="rateLimitMask" class="rateLimit-mask">
+    <div class="rateLimit-dialog">
+        <div class="rateLimit-icon">!</div>
+        <div class="rateLimit-title">访问过于频繁</div>
+        <div class="rateLimit-text" id="rateLimitText"></div>
+        <button class="rateLimit-btn" id="rateLimitClose" type="button">关闭</button>
+    </div>
+</div>
+</body>
+<script src="/lib/js/jquery.min.js" type="text/javascript"></script>
+<script src="/lib/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/lib/js/app.js" type="text/javascript"></script>
+<script src="/lib/plugins/jqgrid/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="/lib/js/jquery.tablednd.js" type="text/javascript"></script>
+<script src="/lib/js/jquery.jqprint-0.3.js"></script>
+<script src="/lib/dist/js/els.js"></script>
+<link href="/lib/plugins/datepicker/datepicker3.css" rel="stylesheet" type="text/css"/>
+<script src="/lib/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    //增加行条件
+    var rowHtml = '<tr  class="queryRows query-input"> <th style="width: 80px"><select class="SearchTool" name="SearchTool"><option value="and">与(A）</option><option value="or">或(O)</option></select></th><td><select name="SearchName" class="advField" ><option value="all">请选择</option></select></td><td class="queryContion_td_For"><select name="SearchFor" class="SearchFor"><option value="1">等于</option><option value="2">开头是</option><option value="3">开头不是</option><option value="4">结尾是</option><option value="5">结尾不是</option><option value="6">包含</option><option value="7">不包含</option></select></td><td class="queryContion_td_input"><input name="SearchContent" class="queryContent" placeholder="输入查询值"/></td><td class="control-buttons"><a class="els-delete" onclick="deleteRow(this)"><i class="fa fa-minus-circle" aria-hidden="true"></i></a> </td></tr>';
+
+    var optionsObj = {};
+
+    //初始化加载
+    $(function () {
+        var firstAdvField = $('.els-advanced-search').find('.advField');
+
+        firstAdvField.html('<option value="all">请选择</option>')
+        //异步请求字段
+        $.ajax({
+            url: "/deviceField.html",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                //返回json对象集合
+                var list = [];
+                list = data.ZDJH;
+                var obj1 = {};
+                for (var i = 0; i < list.length; i++){
+                    var variableName = list[i].CONFIG_NAME;
+                    var humanReadable = list[i].CONFIG_NAME_CN;
+                    var obj = {
+                        "humanReadable": humanReadable,
+                        "variableName": variableName,
+                        "searchType": list[i].CONFIG_VALUE
+                    };
+                    obj1[variableName] = obj;
+                }
+                optionsObj = {"options": obj1};
+
+
+
+                for (var k in optionsObj.options) {
+                    element = optionsObj.options[k]
+                    if (element.variableName == 'groupSection') {
+                        firstAdvField.append('<option disabled value="' + element.variableName + '">' + element.humanReadable + '</option>');
+                    } else {
+                        firstAdvField.append('<option searchType="' + element.searchType + '" limitedoptions="' + element.limitedOptions + '" value="' + element.variableName + '">' + element.humanReadable + '</option>');
+                    }
+                }
+            },
+            error: function (data) {
+
+            }
+        });
+        $('.advField').change(selectChangeListener);
+
+        applyInputListener();
+    })
+    //增加行
+    //var flag = 1;
+    function addRow() {
+        //Only one row, remove the minus
+        if ($('.query-input').length == 1) {
+            var $newMinusButton = $('<a class="els-delete" onclick="deleteRow(this)">-</a>');
+            $newMinusButton.click(function () {
+                deleteRow(this);
+            });
+            $('.query-input').first().find('.control-buttons').append($newMinusButton);
+
+        }
+        //当行数大于等于5时，返回
+        if ($('.query-input').length >= 5) {
+            return;
+        }
+        $newRow = $(rowHtml);
+        var firstAdvField = $newRow.find('.advField');
+
+        for (var k in optionsObj.options) {
+            element = optionsObj.options[k]
+            if (element.variableName == 'section') {
+                firstAdvField.append('<option disabled value="' + element.variableName + '">' + element.humanReadable + '</option>');
+            } else {
+                firstAdvField.append('<option searchType="' + element.searchType + '" limitedoptions="' + element.limitedOptions + '" value="' + element.variableName + '">' + element.humanReadable + '</option>');
+            }
+        }
+        $newRow.find('.els-delete').click(function () {
+            deleteRow(this);
+        });
+
+        $newRow.hide();
+        var rowLength = $("#table tr").length;
+        $("#queryTable tr:eq(" + (rowLength - 1) + ")").after($newRow);
+        $newRow.slideToggle('fast');
+        applyInputListener();
+        buildQuery();
+        buildQueryChinese();
+        $('#add-row').detach().appendTo('.queryRows.query-input:last-child .control-buttons');
+    }
+
+    //删除行
+    function deleteRow(button) {
+        var $closestRow = $(button).closest('.query-input');
+        //只有最后两行时
+        if ($('.query-input').length == 2) {
+            if ($closestRow.is(':last-child')) {
+                $('.query-input').first().find('.els-delete').remove();
+            }else {
+                $('.query-input').last().find('.els-delete').remove();
+            }
+        }
+        if ($closestRow.hasClass('first')) {
+            $closestRow.next(".queryRows").addClass('first').find('.SearchTool').remove();
+        } else if ($closestRow.is(':last-child')) {
+            $('#add-row').detach().appendTo($closestRow.prev().find('.control-buttons'));
+        }
+        $closestRow.slideUp("fast", function () {
+            $(this).remove();
+        });
+
+        $closestRow.remove();
+
+        applyInputListener();
+        //
+        buildQuery();
+        buildQueryChinese();
+
+    }
+
+    //构建拼接查询条件
+    function buildQuery() {
+        var emptyQueryPresent = false;
+        var firstHasText = true;
+        var full_queryString = "";
+        //无查询条件则不执行操作
+        if (!($('#advancedSearch').find('.queryRows.query-input').length)) {
+            return false;
+        }
+        //遍历验证并或者查询条件相关数据
+        $('#advancedSearch').find('.queryRows.query-input').each(function (index) {
+
+            if (index == 0 && $(this).find(".queryContent").val() == '') {
+                firstHasText = false;
+                return;
+            } else if ($(this).find(".queryContent").val() == '') {
+                return;
+            }
+
+            var queryString = "";
+
+            if ($(this).find('.SearchTool').length > 0) {
+                if (full_queryString != "") {
+                    queryString += $(this).find('.SearchTool').val() + " ";
+                }
+            }
+
+            var wrappedTerm = ""
+            var searchType = $(this).find('.advField').find('option:selected').attr('searchType');
+            var allSearch = ($(this).find('.advField').val() == 'all');
+
+            if (!allSearch) {
+                queryString += $(this).find('.advField').val() + ":";
+            }
+            if ($(this).find('.SearchFor').length) {
+                if (allSearch) {
+                    queryString += '(';
+                }
+                // If we're working with a date
+                if (searchType == 'date') {
+                    if ($(this).find('.SearchFor').val() == 'on') {
+                        queryString += '([' + $(this).find(".queryContent").val() + "])";
+                    } else if ($(this).find('.SearchFor').val() == 'before') {
+                        queryString += '([* TO ' + $(this).find(".queryContent").val() + '])';
+                    } else if ($(this).find('.SearchFor').val() == 'after') {
+                        queryString += '([' + $(this).find(".queryContent").val() + ' TO *])';
+                    } else if ($(this).find('.SearchFor').val() == 'between') {
+                        var advQueries = $(this).find(".queryContent");
+                        if ($(advQueries).length == 2 && ($(advQueries[1]).val() != null && $(advQueries[1]).val() != "")) {
+                            queryString += '([' + $(advQueries[0]).val() + ' TO ' + $(advQueries[1]).val() + '])';
+                        } else {
+                            queryString += $(this).find(".queryContent").val();
+                        }
+                    } else {
+                        queryString += $(this).find(".queryContent").val();
+                    }
+
+                } else {
+
+                    if (!allSearch) {
+                        queryString += "(";
+                    }
+
+                    //等于
+                    if ($(this).find('.SearchFor').val() == '1') {
+                        wrappedTerm = '"' + $(this).find(".queryContent").val() + '"';
+                    }//开头是
+                    else if ($(this).find('.SearchFor').val() == '2') {
+                        wrappedTerm = $(this).find(".queryContent").val() + '*';
+                    }//开头不是
+                    else if ($(this).find('.SearchFor').val() == '3') {
+                        wrappedTerm = $(this).find(".queryContent").val() + '@';
+                    }//结尾是
+                    else if ($(this).find('.SearchFor').val() == '4') {
+                        wrappedTerm = '*' + $(this).find(".queryContent").val();
+                    }//结尾不是
+                    else if ($(this).find('.SearchFor').val() == '5') {
+                        wrappedTerm = '@' + $(this).find(".queryContent").val();
+                    }//包含
+                    else if ($(this).find('.SearchFor').val() == '6') {
+                        wrappedTerm = '*' + $(this).find(".queryContent").val() + '*';
+                    }//不包含
+                    else if ($(this).find('.SearchFor').val() == '7') {
+                        //等于
+                        wrappedTerm = '@' + $(this).find(".queryContent").val() + '@';
+                    }
+                    queryString += wrappedTerm;
+                    if (!allSearch) {
+                        queryString += ")";
+                    }
+                }
+
+                if (allSearch) {
+                    queryString += ')';
+                }
+            } else {
+                if (searchType == 'boolean') {
+                    queryString += '(' + $(this).find(".queryContent").val() + ')';
+                } else {
+                    queryString += '("' + $(this).find(".queryContent").val() + '")';
+                }
+            }
+
+            if (full_queryString != "") {
+                full_queryString += " " + queryString;
+            } else {
+                full_queryString = queryString;
+            }
+
+        });
+
+        if (emptyQueryPresent) {
+            return false;
+        } else {
+            $('#query-builder').val(full_queryString);
+            return full_queryString;
+        }
+    }
+
+
+    function buildQueryChinese() {
+        var emptyQueryPresent = false;
+        var firstHasText = true;
+        var full_queryStringChinese = "";
+        //无查询条件则不执行操作
+        if (!($('#advancedSearch').find('.queryRows.query-input').length)) {
+            return false;
+        }
+        //遍历验证并或者查询条件相关数据
+        $('#advancedSearch').find('.queryRows.query-input').each(function (index) {
+
+            if (index == 0 && $(this).find(".queryContent").val() == '') {
+                firstHasText = false;
+                return;
+            } else if ($(this).find(".queryContent").val() == '') {
+                return;
+            }
+
+            var queryString = "";
+
+            if ($(this).find('.SearchTool').length > 0) {
+                if (full_queryStringChinese != "") {
+                    queryString += " " + $(this).find('.SearchTool').find('option:selected').text() + " ";
+                }
+            }
+
+            var wrappedTerm = ""
+            var searchType = $(this).find('.advField').find('option:selected').attr('searchType');
+            var allSearch = ($(this).find('.advField').val() == 'all');
+
+            if (!allSearch) {
+                queryString += $(this).find('.advField').find('option:selected').text() + ":";
+            }
+
+            if ($(this).find('.SearchFor').length) {
+                if (allSearch) {
+                    queryString += '(';
+                }
+                // If we're working with a date
+                if (searchType == 'date') {
+                    if ($(this).find('.SearchFor').val() == 'on') {
+                        queryString += '([' + $(this).find(".queryContent").val() + "])";
+                    } else if ($(this).find('.SearchFor').val() == 'before') {
+                        queryString += '([* TO ' + $(this).find(".queryContent").val() + '])';
+                    } else if ($(this).find('.SearchFor').val() == 'after') {
+                        queryString += '([' + $(this).find(".queryContent").val() + ' TO *])';
+                    } else if ($(this).find('.SearchFor').val() == 'between') {
+                        var advQueries = $(this).find(".queryContent");
+                        if ($(advQueries).length == 2 && ($(advQueries[1]).val() != null && $(advQueries[1]).val() != "")) {
+                            queryString += '([' + $(advQueries[0]).val() + ' TO ' + $(advQueries[1]).val() + '])';
+                        } else {
+                            queryString += $(this).find(".queryContent").val();
+                        }
+                    } else {
+                        queryString += $(this).find(".queryContent").val();
+                    }
+
+                } else {
+
+                    if (!allSearch) {
+                        queryString += "(";
+                    }
+
+                    //等于
+                    if ($(this).find('.SearchFor').val() == '1') {
+                        wrappedTerm = '"' + $(this).find(".queryContent").val() + '"';
+                    }//开头是
+                    else if ($(this).find('.SearchFor').val() == '2') {
+                        wrappedTerm = $(this).find(".queryContent").val() + '*';
+                    }//开头不是
+                    else if ($(this).find('.SearchFor').val() == '3') {
+                        wrappedTerm = $(this).find(".queryContent").val() + '@';
+                    }//结尾是
+                    else if ($(this).find('.SearchFor').val() == '4') {
+                        wrappedTerm = '*' + $(this).find(".queryContent").val();
+                    }//结尾不是
+                    else if ($(this).find('.SearchFor').val() == '5') {
+                        wrappedTerm = '@' + $(this).find(".queryContent").val();
+                    }//包含
+                    else if ($(this).find('.SearchFor').val() == '6') {
+                        wrappedTerm = '*' + $(this).find(".queryContent").val() + '*';
+                    }//不包含
+                    else if ($(this).find('.SearchFor').val() == '7') {
+                        //等于
+                        wrappedTerm = '@' + $(this).find(".queryContent").val() + '@';
+                    }
+                    queryString += wrappedTerm;
+                    if (!allSearch) {
+                        queryString += ")";
+                    }
+                }
+
+                if (allSearch) {
+                    queryString += ')';
+                }
+            } else {
+                if (searchType == 'boolean') {
+                    queryString += '(' + $(this).find(".queryContent").val() + ')';
+                } else {
+                    queryString += '("' + $(this).find(".queryContent").val() + '")';
+                }
+            }
+
+
+
+
+            if (full_queryStringChinese != "") {
+                full_queryStringChinese += " " + queryString;
+            } else {
+                full_queryStringChinese = queryString;
+            }
+
+        });
+
+        if (emptyQueryPresent) {
+            return false;
+        } else {
+            $('#queryStringChinese').val(full_queryStringChinese);
+        }
+    }
+
+    //查询条件文本框change事件
+    function applyInputListener() {
+        $('.advField').off('input change');
+        $('#advancedSearch :input').off('input change');
+        $('#advancedSearch :input:not(.advField)').on('input change', function (e) {
+            if ($(this).hasClass('advField')) {
+                e.preventDefault();
+            }
+            buildQuery();
+            buildQueryChinese();
+        });
+        $('.advField').change(selectChangeListener);
+    }
+
+    function selectChangeListener() {
+
+        var selected = $(this).find(":selected");
+        var closestQueryInput = $(this).closest('.query-input');
+
+        var inputValue = "";
+        if (!closestQueryInput.find(".queryContent").is('select')) {
+            inputValue = closestQueryInput.find(".queryContent").val();
+        }
+
+        //判断检索类型，对检索条件进行重新构造
+        if ($(selected).attr('searchType') == "boolean") {
+            if ($(selected).val() == "DEVICE_TYPE") {
+                $(closestQueryInput).find('.queryContion_td_For').html('<select tabindex="0" name="SearchContent" class="queryContent"><option value="1">器械</option><option value="2">体外诊断试剂</option></select>');
+            } else {
+                $(closestQueryInput).find('.queryContion_td_For').html('<select tabindex="0" name="SearchContent" class="queryContent"><option value="1">是</option><option value="0">否</option></select>');
+            }
+            $(closestQueryInput).find(".queryContion_td_input").html('');
+        } else if ($(selected).attr('searchType') == "date") {
+
+            $(closestQueryInput).find('.queryContion_td_For').html(
+                '<select tabindex="0" name="SearchFor" class="SearchFor">' +
+                '<option value="on">等于</option>' +
+                '<option value="before">小于</option>' +
+                '<option value="after">大于</option>' +
+                '<option value="between">时间段</option>' +
+                '</select>');
+            $(closestQueryInput).find(".queryContion_td_input").html('<input tabindex="0"  style="width:132px;margin-right: 10px;" maxlength="10" name="SearchContent" class="queryContent startTime" type="text" readonly   placeholder="YYYY-MM-DD" >');
+            $(closestQueryInput).find('.queryContion_td_input').find('.startTime').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                disableDblClickSelection: true
+            });
+
+            var thisChangableInput = $(closestQueryInput).find('.queryContion_td_For');
+
+            $(thisChangableInput).off('change select');
+
+            $(thisChangableInput).on('change', 'select', function () {
+                if ($(this).val() == 'between') {
+                    $(closestQueryInput).find(".queryContion_td_input").append('<input tabindex="0"  style="width: 132px;" maxlength="10" type="text" name="SearchContent" class="queryContent endTime"  placeholder="YYYY-MM-DD" >')
+                    $(closestQueryInput).find('.queryContion_td_input').find('.endTime').datepicker({
+                        // Watson DE likes dates best in this format
+                        format: 'yyyy-mm-dd',
+                        autoclose: true,
+                        disableDblClickSelection: true
+                    });
+                    applyInputListener();
+                } else {
+                    if ($(closestQueryInput).find('.queryContion_td_input').find('.endTime').length > 0) {
+                        $(closestQueryInput).find('.queryContion_td_input').find('.endTime').remove();
+                    }
+                }
+            });
+        } else {
+            if ($(selected).val() == "AGENCY_NAME") {
+                $(closestQueryInput).find('.queryContion_td_For').html('<select tabindex="0" name="SearchContent" class="selectLimitedOptions queryContent"><option value="GS1">GS1</option><option value="AHM">AHM</option><option value="MA码（IDcode）">MA码</option></select>');
+                $(closestQueryInput).find(".queryContion_td_input").html('');
+            } else {
+                $(closestQueryInput).find('.queryContion_td_For').html('<select name="SearchFor" class="SearchFor"><option value="1">等于</option><option value="2">开头是</option><option value="3">开头不是</option><option value="4">结尾是</option><option value="5">结尾不是</option><option value="6">包含</option><option value="7">不包含</option></select>');
+                $(closestQueryInput).find(".queryContion_td_input").html('<input name="SearchContent" class="queryContent" placeholder="输入查询值"/>');
+            }
+        }
+
+        buildQuery();
+        buildQueryChinese();
+        applyInputListener();
+    }
+
+
+
+</script>
+<script>
+    var querySearch = '';
+
+    var obj ={
+        "names": ['最小销售单元产品标识', '医疗器械唯一标识编码体系名称','最小销售单元中使用单元的数量','医疗器械注册人/备案人名称', '产品名称/通用名称','型号规格/包装规格','是否退市'],
+        "model": [
+            {name: "primaryDeviceId",width: 160, align: 'center', sortable: false,fixed: true,
+                formatter: function (val, opts, rowData) {
+                    var deviceRecordKey = rowData.deviceRecordKey;
+                    return '<a href="javascript:;" onclick="toSearchDetail(\''+deviceRecordKey+'\');" title="详情" style="color:#1d82b7 ">'+val+'</a>'
+                }
+            },
+            {name: "agencyName",width: 100, align: 'center', sortable: false,fixed: true},
+            {name: "deviceCount",width: 100, align: 'center', sortable: false,fixed: true},
+            {name: "companyName",width: 280, align: 'center', sortable: false,fixed: true},
+            {name: "productName",width: 250, align: 'center', sortable: false,fixed: true},
+            {name: "specification",width: 140, align: 'center', sortable: false,fixed: true},
+            {name: "deviceEndDateStatus",width: 90, align: 'center', sortable: false,fixed: true,
+                formatter: function (val, opts, rowdata) {
+                    var deviceEndDateStatus = rowdata.deviceEndDateStatus;
+                    if (deviceEndDateStatus == '是'){
+                        return '<span class="el-tag el-tag--danger"> 是 </span>';
+                    }else if (deviceEndDateStatus == '否'){
+                        return '<span class="el-tag el-tag--success"> 否 </span>';
+                    }else{
+                        return '<span class="el-tag el-tag--info"> -- </span>';
+                    }
+                }
+            },
+        ]
+    };
+    var app = $.els;
+    var grid = app.grid;
+
+    $(function () {
+        initGrid();
+        var searchType = '1'
+        if(searchType == '1'){
+            $("#searchContnts").val(querySearch)
+        }else{
+            querySearch = '';
+        }
+        $('#searchForm').keydown(function(e){
+            if(e.keyCode==13){
+                $("#searchIcon").click();
+                return false;
+            }
+        });
+    })
+
+
+
+
+    function initGrid() {
+        var queryBefore = '';
+        //查询条件中的()会进行转义，需要替换下
+        var queryAfter = queryBefore.replace(/&#40;/g, "(").replace(/&#41;/g, ")");
+        $('#grid').jqGrid({
+            url: "/getDeviceList.html",
+            datatype: "json",
+            colNames: obj.names,
+            colModel: obj.model,
+            postData:{
+                "query": queryAfter,
+                "searchType": '1'
+            },
+            rowNum: 15,
+            rowList: [],
+            altRows: false,
+            shrinkToFit: false,
+            autowidth: true,
+            rownumbers: true,//是否显示行号。true：显示
+            rownumWidth: 71,// 行号所在列的宽度
+            pager: '#pager',
+            mtype: "post",
+            elsShrinkToFit: false, //全自动列宽伸缩方案
+            virtualScrollbar: false, //虚拟滚动条方案 滚动容器只可为body
+            validPages: true, //回车触发翻页查询前效验有效页码
+            //接口触发限流（HTTP 429）时给出提示
+            loadError: function (xhr) {
+                if (xhr && xhr.status === 429) {
+                    var msg = "访问过于频繁，请稍后再试";
+                    try {
+                        msg = JSON.parse(xhr.responseText).message || msg;
+                    } catch (e) {
+                    }
+                    showRateLimitDialog(msg);
+                }
+            },
+            gridComplete:function(){
+                var deviceSum = $("#grid").jqGrid('getGridParam', 'records');
+                $("#deviceSum").html("("+deviceSum+"条记录)");
+                $("#query").html(querySearch);
+                if(deviceSum == 0){
+                    $("#deviceGrid").hide();
+                    $(".els-info-box-noresults").show();
+                }else{
+                    $("#deviceGrid").show();
+                    $(".els-info-box-noresults").hide();
+                    var length = $("#grid > tbody").children("tr").length - 1 ;
+
+                    var height = 0;
+                    $('#grid tbody tr').each(function(i){
+                        height += $(this).height();
+                    });
+
+                    if(length > 0){
+                        $("#grid").setGridHeight(height + 4);
+                    }else{
+                        $("#grid").setGridHeight(300);
+                    }
+                }
+
+
+            }
+        });
+        $("#grid").jqGrid('setLabel','rn', '序号', {'text-align':'center'},'');
+
+    }
+
+    //查询
+    $("#searchIcon").click(function () {
+
+        var query = $("#searchContnts").val().trim();
+        //查询条件中的()会进行转义，需要替换下
+        query = query.replace(/&#40;/g, "(").replace(/&#41;/g, ")");
+        if (query == null || query == "") {
+            alert("搜索时请输入关键字！", "error");
+            return false;
+        } else if(query.length == 1){
+            alert("请输入包含两个或更多字母或数字的关键字", "error");
+            return false;
+        } else if(query.length>50){
+            alert("关键字不能超过50，请重新输入", "error");
+            return false;
+        }
+        querySearch = query;
+        $("#grid").jqGrid("setGridParam", {
+            url: "/getDeviceList.html",
+            postData: {
+                "query": query,
+                "searchType": 1
+            },
+        }).trigger("reloadGrid");
+
+    });
+
+
+
+
+
+
+    $("#querySearch").click(function () {
+        $("#searchContnts").val("");
+        var searchQuery = $('#query-builder').val();
+        var queryStringChinese = $('#queryStringChinese').val();
+        if (searchQuery == null || searchQuery == "") {
+            alert("搜索时请选择需要检索的关键字段和检索内容！", "error");
+            return false;
+        }
+        querySearch = queryStringChinese;
+        $("#grid").jqGrid("setGridParam", {
+            url: "/getDeviceList.html",
+            postData: {
+                "query": searchQuery,
+                "searchType": 2
+            },
+        }).trigger("reloadGrid");
+
+        $('.els-advanced-search').slideToggle("slow")
+    });
+
+
+    //打开限流提示弹窗
+    function showRateLimitDialog(message){
+        $("#rateLimitText").text(message || "访问过于频繁，请稍后再试");
+        $("#rateLimitMask").addClass("show");
+    }
+
+    //关闭限流提示弹窗
+    function closeRateLimitDialog(){
+        $("#rateLimitMask").removeClass("show");
+    }
+
+    //关闭按钮
+    $("#rateLimitClose").click(function () {
+        closeRateLimitDialog();
+    });
+
+    //点击遮罩区域关闭
+    $("#rateLimitMask").click(function (e) {
+        if (e.target === this) {
+            closeRateLimitDialog();
+        }
+    });
+
+    //查看详情：先做限流预检，通过后再跳转，被限流时弹窗提示
+    function toSearchDetail(deviceRecordKey){
+        $.ajax({
+            url: "/checkDetailRateLimit.html",
+            type: "post",
+            dataType: "json",
+            success: function () {
+                window.open("/showDetailCX.html?deviceRecordKey=" + encodeURIComponent(deviceRecordKey), "_blank");
+            },
+            error: function (xhr) {
+                if (xhr && xhr.status === 429) {
+                    var msg = "访问过于频繁，请稍后再试";
+                    try {
+                        msg = JSON.parse(xhr.responseText).message || msg;
+                    } catch (e) {
+                    }
+                    showRateLimitDialog(msg);
+                } else {
+                    showRateLimitDialog("系统繁忙，请稍后再试");
+                }
+            }
+        });
+    }
+
+    $('.searchIcon-advanced').click(function () {
+        $('.els-advanced-search').slideToggle()
+        return false;
+    });
+</script>
+</html>

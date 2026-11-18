@@ -1,0 +1,12 @@
+* text=auto
+
+*.py text eol=lf
+*.md text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+
+# 数据文件保持原样，避免换行符转换破坏 BOM / Excel 兼容
+*.csv -text
+*.json -text
+*.html -text
+*.js -text
